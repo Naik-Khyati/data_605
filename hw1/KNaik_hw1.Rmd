@@ -1,0 +1,72 @@
+---
+title: 'Khyati Naik: Data 605 - HW1'
+date: "Sep 2, 2023"
+output: pdf_document
+---
+
+
+
+```{r}
+x <- c(
+       seq(-2,0.-1.5,length.out=500),
+       rep(-2, 500),
+       seq(-2,-1.5,length.out=500),
+       
+       rep(-1, 500),
+       seq(-1,-0.5,length.out=500),
+       rep(-0.5, 500)
+       )
+
+y <- c(
+       seq(0,1.5,length.out=500),
+       seq(-2,1.5,length.out = 500),
+       seq(0.25, -1.75, length.out = 500),
+      
+       seq(-2,1.5,length.out = 500), 
+       seq(1.5,0.-2,length.out=500),
+       seq(-2,1.5,length.out = 500)
+       
+       )
+
+z=rbind(x,y)
+plot(y~x, xlim=c(-3,3), ylim=c(-3,3))
+
+```
+```{r}
+left_multiply <- function(x, y) {
+  x %*% y
+}
+left_multiply(matrix(rep(seq(1, 3, length.out = 3), 3), nrow = 3, ncol = 3), diag(3))
+```
+
+
+```{r}
+for (i in seq(0, 4, length.out = 10)) {
+  shear_z <- apply(z, 2, function(x) left_multiply(x, matrix(c(1, 0, i, 1), nrow = 2, ncol = 2)))
+  plot(shear_z[2,] ~ shear_z[1,], xlim = c(-3, 3), ylim = c(-10, 3))
+}
+```
+
+```{r}
+for (i in seq(1, 4, length.out = 10)) {
+  scaling_z <- apply(z, 2, function(x) left_multiply(x, matrix(c(i, 0, 0, i), nrow = 2, ncol = 2)))
+  plot(scaling_z[2,] ~ scaling_z[1,], xlim = c(-9, 9), ylim = c(-9, 9))
+}
+```
+
+```{r}
+for (i in seq(0, pi * 2, length.out = 20)) {
+  rotating_z <- apply(z, 2, function(x) left_multiply(x, matrix(c(cos(i), -sin(i), sin(i), cos(i)), nrow = 2, ncol = 2)))
+  plot(rotating_z[2,] ~ rotating_z[1,], xlim = c(-3, 3), ylim = c(-3, 3))
+}
+```
+
+
+```{r}
+for (i in seq(0, 2 * pi, length.out = 20)) {
+  Z <- rbind(z, rep(0, ncol(z)))
+  ani_z <- apply(Z, 2, function(x) left_multiply(x, matrix(c(1, 0, 0, 0, cos(i), -sin(i), 0, sin(i), cos(i)), nrow = 3, ncol = 3)))
+  plot(ani_z[2,] ~ ani_z[1,], xlim = c(-3, 3), ylim = c(-3, 3))
+  }
+```
+
