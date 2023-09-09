@@ -1,0 +1,127 @@
+---
+title: "Khyati Naik: Data 605 - HW2"
+date: "Sep 10, 2023"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+---
+
+## Problem Set 1
+
+### (1) Show that ATA != AAT in general. (Proof and demonstration.)
+
+```{r}
+
+# Create a random square matrix A
+set.seed(123)  # For reproducibility
+n <- 3  # Change this to the size of the matrix
+A <- matrix(rnorm(n^2), nrow = n)
+
+# Display the original matrix A
+cat("Matrix A:\n")
+print(A)
+
+# Calculate AT*A and AAT
+ATA <- t(A) %*% A
+
+# Display the ATA
+cat("Matrix ATA:\n")
+print(ATA)
+
+AAT <- A %*% t(A)
+
+# Display the AAT
+cat("Matrix AAT:\n")
+print(AAT)
+
+# Check if AT*A is not equal to AAT in general
+not_equal <- any(ATA != AAT)
+
+# Display results
+if (not_equal) {
+  cat("AT * A is not equal to A * AT\n")
+} else {
+  cat("AT * A is equal to A * AT\n")
+}
+```
+
+### (2) For a special type of square matrix A, we get AT  = AAT. Under what conditions could this be true? (Hint: The Identity matrix I is an example of such a matrix)
+
+```{r}
+# Generate a random orthogonal matrix using SVD
+set.seed(123)
+n <- 3  # Change this to the size of the matrix
+A <- matrix(rnorm(n^2), nrow = n)
+U <- svd(A)$u
+
+# Calculate A^T * A and A * A^T
+ATA <- t(U) %*% U
+AAT <- U %*% t(U)
+
+# Check if A^T * A is equal to A * A^T
+equal_condition <- all.equal(ATA, AAT)
+
+# Display results
+cat("Matrix U (Orthogonal Matrix):\n")
+print(U)
+
+if (equal_condition) {
+  cat("\nA^T * A is equal to A * A^T for orthogonal matrix A\n")
+} else {
+  cat("\nA^T * A is not equal to A * A^T for orthogonal matrix A\n")
+}
+
+# Verify A^T * A = I
+identity_matrix <- diag(n)
+equal_identity <- all.equal(ATA, identity_matrix)
+
+if (equal_identity) {
+  cat("\nA^T * A is equal to the identity matrix I\n")
+} else {
+  cat("\nA^T * A is not equal to the identity matrix I\n")
+}
+
+```
+
+## Problem Set 2
+
+Write an R function to factorize a square matrix A into LU or LDU, whichever you prefer.
+
+```{r}
+
+LU_decomposition <- function(A) {
+  n <- dim(A)[1]
+  U <- A
+  L <- diag(n)
+  
+  if (n == 1) {
+    return(list(L = L, U = U))
+  }
+  
+  for (i in 2:n) {
+    for (j in 1:(i - 1)) {
+      multiplier <- -U[i, j] / U[j, j]
+      U[i, ] <- multiplier * U[j, ] + U[i, ]
+      L[i, j] <- -multiplier
+    }
+  }
+  
+  return(list(L = L, U = U))
+}
+
+# Test the LU decomposition function
+A <- matrix(c(2, -1, -2, 4, 1, -3, 0, 3, -2), nrow = 3)
+LU <- LU_decomposition(A)
+
+cat("Matrix A:\n")
+print(A)
+cat("Matrix L:\n")
+print(LU$L)
+cat("Matrix U:\n")
+print(LU$U)
+
+A == LU$L %*% LU$U
+
+```
+
