@@ -1,0 +1,151 @@
+---
+title: "Khyati Naik: Data 605 - HW3"
+date: "Sep 15, 2023"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+---
+
+## Problem Set 1
+
+### (1) What is the rank of the matrix A?
+
+```{r}
+A <- matrix(c(1, 2, 3, 4, -1, 0, 1, 3, 0, 1, -2, 1, 5, 4, -2, -3), nrow = 4, byrow = TRUE)
+A
+rank_A <- qr(A)$rank
+cat("Rank of matrix A:", rank_A, "\n")
+```
+### (2) Given an mxn matrix where m > n, what can be the maximum rank? The minimum rank, assuming that the matrix is non-zero?
+
+For an m×n matrix where m>n, the highest attainable rank is determined by the number of columns (n) in the matrix. The maximum rank cannot surpass the count of columns as it would imply having more linearly independent columns than there are available columns in the matrix, which is not feasible. Therefore, the greatest achievable rank for an m×n matrix with m>n is n.
+
+Regarding the lowest possible rank, given that the matrix is non-zero, the minimum rank is invariably 1. This is due to the fact that a non-zero matrix will always contain at least one row or column with non-zero elements. These non-zero elements establish linearly independent values, resulting in a minimum rank of 1.
+
+### What is the rank of matrix B?
+
+```{r}
+B <- matrix(c(1, 2, 1, 3, 6, 3, 2, 4, 2), nrow = 3, byrow = TRUE)
+B
+rank_B <- qr(B)$rank
+cat("Rank of matrix B:", rank_B, "\n")
+```
+
+## Problem set 2
+
+### Compute the eigenvalues and eigenvectors of the matrix A. You’ll need to show your work. You’ll need to write out the characteristic polynomial and show your solution.
+
+```{r}
+library(Matrix)
+
+A_p2 <- matrix(c(1, 2, 3, 0, 4, 5, 0, 0, 6), nrow = 3, byrow = TRUE)
+A_p2 <- as.matrix(A_p2)
+
+# Compute eigenvalues and eigenvectors
+eigen_decomp <- eigen(A_p2)
+
+# Extract eigenvalues and eigenvectors
+eigenvalues <- eigen_decomp$values
+eigenvectors <- eigen_decomp$vectors
+
+# Display results
+cat("Eigenvalues:\n")
+print(eigenvalues)
+cat("\nEigenvectors:\n")
+print(eigenvectors)
+```
+
+Below is the written solution.
+
+The given matrix \(A_p2\) is:
+
+\[
+A_p2 = \begin{bmatrix}
+1 & 2 & 3 \\
+0 & 4 & 5 \\
+0 & 0 & 6 \\
+\end{bmatrix}
+\]
+
+
+To find the characteristic polynomial, we solve \(\det(A - \lambda I) = 0\), where \(I\) is the identity matrix and \(\lambda\) is the eigenvalue.
+
+\[
+A - \lambda I = \begin{bmatrix}
+1 - \lambda & 2 & 3 \\
+0 & 4 - \lambda & 5 \\
+0 & 0 & 6 - \lambda \\
+\end{bmatrix}
+\]
+
+Taking the determinant:
+
+\[
+\det(A - \lambda I) = (1 - \lambda) (4 - \lambda) (6 - \lambda)
+\]
+
+
+
+Setting \(\det(A - \lambda I) = 0\), we solve for \(\lambda\) to find the eigenvalues. So, the characteristic polynomial is:
+
+\[
+(1 - \lambda) (4 - \lambda) (6 - \lambda) = 0
+\]
+
+
+Solving for \(\lambda\), we get three eigenvalues: \(\lambda_1 = 1\), \(\lambda_2 = 4\), and \(\lambda_3 = 6\).
+
+   
+   
+   For each eigenvalue, we solve the equation \((A - \lambda I)v = 0\) to find the eigenvector \(v\).
+
+1. For \(\lambda = 1\):
+
+   Solving \((A - \lambda I)v = 0\):
+
+   \[
+   \begin{bmatrix}
+   0 & 2 & 3 \\
+   0 & 3 & 5 \\
+   0 & 0 & 5 \\
+   \end{bmatrix}
+   v = 0
+   \]
+
+   The solution gives \(v = [1, 0, 0]\).
+
+2. For \(\lambda = 4\):
+
+   Solving \((A - \lambda I)v = 0\):
+
+   \[
+   \begin{bmatrix}
+   -3 & 2 & 3 \\
+   0 & 0 & 5 \\
+   0 & 0 & 2 \\
+   \end{bmatrix}
+   v = 0
+   \]
+
+   The solution gives \(v = [1, 1.5, 0]\).
+
+3. For \(\lambda = 6\):
+
+   Solving \((A - \lambda I)v = 0\):
+
+   \[
+   \begin{bmatrix}
+   -5 & 2 & 3 \\
+   0 & -2 & 5 \\
+   0 & 0 & 0 \\
+   \end{bmatrix}
+   v = 0
+   \]
+
+   The solution gives \(v = [1.6, 2.5, 1]\).
+
+In this case, the eigenvectors corresponding to \(\lambda = 1\) is \([1, 0, 0]\), for \(\lambda = 4\) is \([1, 1.5, 0]\), and for \(\lambda = 6\) is \([1.6, 2.5, 1]\). This indicates that the matrix \(A_p2\) has distinct eigenvectors for each eigenvalue.
+
+
+
