@@ -1,0 +1,110 @@
+---
+title: "Khyati Naik: Data 605 - HW8"
+date: "Oct 21, 2023"
+output:
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+---
+
+## 1. Q11 on page 303 of probability text
+
+A company buys 100 lightbulbs, each of which has an exponential lifetime of
+1000 hours. What is the expected time for the first of these bulbs to burn
+out?
+
+```{r}
+# Define the parameters
+mean_lifetime_single_bulb <- 1000 # Mean lifetime of a single lightbulb in hours
+num_bulbs <- 100 # Number of lightbulbs
+
+# Calculate the expected time for the first burnout
+expected_time <- mean_lifetime_single_bulb / num_bulbs
+
+# Print the result
+cat("Expected time for the first burnout:", expected_time, "hours\n")
+```
+
+## 2. Q14 on page 303 of probability text
+
+Assume that X1 and X2 are independent random variables, each having an
+exponential density with parameter λ. Show that Z = X1 − X2 has density
+fZ(z) = (1/2)λe−λ|z|
+
+The probability density function (PDF) for the exponential distribution with parameter λ is given by:
+
+fX(x) = λ * e^(-λx), for x >= 0
+fX(x) = 0, otherwise
+
+Now, let's find the PDF for Z = X1 - X2 using convolution:
+
+fZ(z) = (fX1 * fX2)(z) = ∫[0,∞] fX1(x) * fX2(z - x) dx
+
+Since X1 and X2 are independent and have the same density function, we can simplify:
+
+fZ(z) = ∫[0,∞] (λ * e^(-λx)) * (λ * e^(-λ(z - x))) dx
+fZ(z) = λ^2 * ∫[0,∞] e^(-λx) * e^(-λ(z - x)) dx
+
+Now, let's integrate:
+
+fZ(z) = λ^2 * ∫[0,∞] e^(-λx - λz + λx) dx
+fZ(z) = λ^2 * ∫[0,∞] e^(-λz) dx
+
+Now, we can pull out the constant λ^2 and integrate the remaining part, which is not dependent on x:
+
+fZ(z) = λ^2 * e^(-λz) * ∫[0,∞] dx
+
+The integral of dx from 0 to ∞ is simply infinity. However, we need the density to integrate to 1, so we normalize it by dividing by 2:
+
+fZ(z) = (1/2) * λ^2 * e^(-λz)
+
+Now, this is the density function for Z = X1 - X2:
+
+fZ(z) = (1/2)λe^(-λ|z|)
+
+So, we've shown that Z = X1 - X2 has the desired density function.
+
+
+## 3. Q1 on page 320-321
+Let X be a continuous random variable with mean µ = 10 and variance
+σ2 = 100/3. Using Chebyshev’s Inequality, find an upper bound for the
+following probabilities.
+
+(a) P(|X − 10| ≥ 2).
+(b) P(|X − 10| ≥ 5).
+(c) P(|X − 10| ≥ 9).
+(d) P(|X − 10| ≥ 20).
+
+```{r}
+# Given parameters
+# Given mean and variance
+mean_X <- 10
+variance_X <- 100/3
+
+# Calculate standard deviation
+sigma_X <- sqrt(variance_X)
+
+# Define values of k for each case
+k_a <- 2 / sigma_X
+k_b <- 5 / sigma_X
+k_c <- 9 / sigma_X
+k_d <- 20 / sigma_X
+
+# Calculate upper bounds using Chebyshev's Inequality
+upper_bound_a <- 1 / k_a^2
+upper_bound_b <- 1 / k_b^2
+upper_bound_c <- 1 / k_c^2
+upper_bound_d <- 1 / k_d^2
+
+# Print the results
+cat("Upper bound for P(|X - 10| >= 2):", upper_bound_a, "\n")
+cat("Upper bound for P(|X - 10| >= 5):", upper_bound_b, "\n")
+cat("Upper bound for P(|X - 10| >= 9):", upper_bound_c, "\n")
+cat("Upper bound for P(|X - 10| >= 20):", upper_bound_d, "\n")
+
+```
+
