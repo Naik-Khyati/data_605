@@ -1,0 +1,139 @@
+---
+title: "Khyati Naik: Data 605 - HW7"
+date: "Oct 14, 2023"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+---
+
+## 1. Let X1, X2, . . . , Xn be n mutually independent random variables, each of which is uniformly distributed on the integers from 1 to k. Let Y denote the minimum of the Xi’s. Find the distribution of Y.
+
+The distribution of Y, the minimum of the random variables X1, X2, ..., Xn, can be found by considering the complementary event: P(Y > y), where y is a particular value.
+
+For Y to be greater than y, all of the X1, X2, ..., Xn must be greater than y. Since each Xi is uniformly distributed on the integers from 1 to k, the probability that any Xi is greater than y is (k - y)/k.
+
+Since the random variables X1, X2, ..., Xn are mutually independent, we can multiply their probabilities together:
+
+P(Y > y) = P(X1 > y) * P(X2 > y) * ... * P(Xn > y)
+
+= [(k - y)/k] * [(k - y)/k] * ... * [(k - y)/k]
+
+= [(k - y)/k]^n
+
+Now, to find the distribution of Y, we need to find P(Y = y), which is the probability that Y is exactly equal to y:
+
+P(Y = y) = P(Y > y - 1) - P(Y > y)
+
+= [(k - (y - 1))/k]^n - [(k - y)/k]^n
+
+This gives you the probability mass function (PMF) of the distribution of Y for each value of y from 1 to k.
+
+In summary, the distribution of Y, the minimum of the Xi's, follows a discrete probability distribution where the PMF is given by:
+
+P(Y = y) = [(k - (y - 1))/k]^n - [(k - y)/k]^n
+
+for y = 1 to k.
+
+## 2. Your organization owns a copier (future lawyers, etc.) or MRI (future doctors). This machine has a manufacturer’s expected lifetime of 10 years. This means that we expect one failure every ten years. (Include the probability statements and R Code for each part.)
+
+### a. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a geometric. (Hint: the probability is equivalent to not failing during the first 8 years.
+
+```{r}
+# Probability of not failing in 8 years
+probability_survive_8_years <- (9/10)^8
+
+# Probability of failing after 8 years (complement of surviving for 8 years)
+probability_fail_after_8_years <- probability_survive_8_years
+
+# Expected value (mean) of the geometric distribution
+expected_value <- 1 / (1/10)
+
+# Standard deviation of the geometric distribution
+standard_deviation <- sqrt((1 - 1/10) / (1/10)^2)
+
+# Print the results
+cat("Probability of failing after 8 years:", probability_fail_after_8_years, "\n")
+cat("Expected value (mean):", expected_value, "\n")
+cat("Standard deviation:", standard_deviation, "\n")
+```
+
+### b. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as an exponential. 
+
+```{r}
+# Rate parameter
+lambda <- 1/10
+
+# Time (in years) after which we want to find the probability
+x <- 8
+
+# Probability that the machine will not fail before 8 years
+probability_survive_8_years <- exp(-lambda * x)
+
+# Probability of failing after 8 years (complement of surviving for 8 years)
+probability_fail_after_8_years <- probability_survive_8_years
+
+# Expected value (mean) of the exponential distribution
+expected_value <- 1 / lambda
+
+# Standard deviation of the exponential distribution
+standard_deviation <- 1 / lambda
+
+# Print the results
+cat("Probability of failing after 8 years (Exponential):", probability_fail_after_8_years, "\n")
+cat("Expected value (mean):", expected_value, "\n")
+cat("Standard deviation:", standard_deviation, "\n")
+```
+
+
+### c. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a binomial. (Hint: 0 success in 8 years) 
+
+```{r}
+# Probability of failure in a single year
+p_failure <- 1/10  # Since the machine fails on average once every 10 years
+
+# Number of trials (years)
+n_years <- 8
+
+# Number of failures (successes for our binomial)
+x_failures <- 0
+
+# Probability of 0 failures in 8 years (binomial)
+probability_0_failures <- dbinom(x_failures, size = n_years, prob = p_failure)
+
+# Expected value (mean) of the binomial distribution
+expected_value_binomial <- n_years * p_failure
+
+# Standard deviation of the binomial distribution
+standard_deviation_binomial <- sqrt(n_years * p_failure * (1 - p_failure))
+
+# Print the results
+cat("Probability of failing after 8 years (Binomial):", 1 - probability_0_failures, "\n")
+cat("Expected value (mean):", expected_value_binomial, "\n")
+cat("Standard deviation:", standard_deviation_binomial, "\n")
+```
+
+### d. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a Poisson.
+
+```{r}
+# Rate parameter for Poisson distribution
+lambda <- 8 * (1/10)  # Average number of failures in 8 years
+
+# Number of failures (successes for Poisson)
+x_failures <- 0
+
+# Probability of 0 failures in 8 years (Poisson)
+probability_0_failures <- dpois(x_failures, lambda)
+
+# Expected value (mean) of the Poisson distribution
+expected_value_poisson <- lambda
+
+# Standard deviation of the Poisson distribution
+standard_deviation_poisson <- sqrt(lambda)
+
+# Print the results
+cat("Probability of failing after 8 years (Poisson):", probability_0_failures, "\n")
+cat("Expected value (mean):", expected_value_poisson, "\n")
+cat("Standard deviation:", standard_deviation_poisson, "\n")
+```
+
