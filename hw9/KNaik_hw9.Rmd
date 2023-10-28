@@ -1,0 +1,158 @@
+---
+title: "Khyati Naik: Data 605 - HW9"
+date: "Oct 28, 2023"
+output:
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+---
+
+
+## 1. Problem 11 page 363
+
+The price of one share of stock in the Pilsdorff Beer Company (see Exercise 8.2.12) is given by Yn on the nth day of the year. Finn observes that
+the differences Xn = Yn+1 − Yn appear to be independent random variables
+with a common distribution having mean µ = 0 and variance σ
+2 = 1/4. If
+Y1 = 100, estimate the probability that Y365 is
+(a) ≥ 100.
+(b) ≥ 110.
+(c) ≥ 120.
+
+```{r}
+# Given parameters
+mean_X <- 0
+variance_X <- 1/4
+n <- 364  # Number of days
+initial_price <- 100
+
+# Calculate the standard deviation of Sn
+std_dev_Sn <- sqrt(n * variance_X)
+
+# Calculate z-scores for different values
+z_score_a <- (100 - initial_price) / std_dev_Sn
+z_score_b <- (110 - initial_price) / std_dev_Sn
+z_score_c <- (120 - initial_price) / std_dev_Sn
+
+# Calculate probabilities
+prob_a <- pnorm(z_score_a)
+prob_b <- 1 - pnorm(z_score_b)
+prob_c <- 1 - pnorm(z_score_c)
+
+# Print the probabilities
+cat("(a) P(Y365 >= 100):", round(prob_a, 4), "\n")
+cat("(b) P(Y365 >= 110):", round(prob_b, 4), "\n")
+cat("(c) P(Y365 >= 120):", round(prob_c, 4), "\n")
+```
+
+
+## 2. Calculate the expected value and variance of the binomial distribution using the moment generating function.
+
+The probability mass function of the binomial distribution is given by:
+
+\[f(x) = \binom{n}{x} p^x (1-p)^{n-x}\]
+
+Here, \(n\) represents the number of trials, \(x\) is the number of successes, and \(p\) is the probability of success.
+
+
+The MGF of the binomial distribution is found by taking the sum of the probabilities of all possible outcomes, each weighted by \(e^{tx}\), where \(t\) is a real-valued parameter:
+
+\[M(t) = \sum_{x=0}^{n} e^{tx} \binom{n}{x} p^x (1-p)^{n-x}\]
+
+Simplifying further:
+
+\[M(t) = (pe^t + 1-p)^n\]
+
+Where:
+- \(n\) is the number of trials.
+- \(p\) is the probability of success in each trial.
+
+Expected Value (\(E[X]\))
+
+To find the expected value (\(E[X]\)) of the binomial distribution, we take the derivative of the MGF with respect to \(t\) and evaluate it at \(t = 0\):
+
+Step 1: Calculate the First Derivative
+
+Let's calculate the first derivative of the MGF:
+
+\[M'(t) = \frac{d}{dt} \left[ (pe^t + 1 - p)^n \right]\]
+
+Step 2: Evaluate at \(t = 0\)
+
+Now, evaluate the first derivative at \(t = 0\):
+
+\[E[X] = M'(0)\]
+
+Variance (\(Var[X]\))
+
+To find the variance (\(Var[X]\)), we need to take the second derivative of the MGF, subtract the square of the first derivative, and evaluate it at \(t = 0\).
+
+Step 1: Calculate the Second Derivative
+
+Let's calculate the second derivative of the MGF:
+
+\[M''(t) = \frac{d^2}{dt^2} \left[ (pe^t + 1 - p)^n \right]\]
+
+Step 2: Subtract Square of First Derivative
+
+Subtract the square of the first derivative:
+
+\[Var[X] = M''(0) - \left[ M'(0) \right]^2\]
+
+The variance is \(np(1-p)\), indicating the spread or variability of the number of successes.
+
+
+## 3. Calculate the expected value and variance of the exponential distribution using the momentgenerating function.
+
+Moment Generating Function (MGF)
+
+The moment generating function (MGF) of the exponential distribution is defined as:
+
+\[M(t) = \frac{1}{{1 - \lambda t}}\]
+
+Where:
+- \(\lambda\) is the rate parameter.
+
+Expected Value (\(E[X]\))
+
+To find the expected value (\(E[X]\)), we need to take the first derivative of the MGF with respect to \(t\) and evaluate it at \(t = 0\).
+
+Step 1: Calculate the First Derivative
+
+Let's calculate the first derivative of the MGF:
+
+\[M'(t) = \frac{d}{dt} \left[ \frac{1}{{1 - \lambda t}} \right]\]
+
+Step 2: Evaluate at \(t = 0\)
+
+Now, evaluate the first derivative at \(t = 0\):
+
+\[E[X] = M'(0)\]
+
+The expected value is \(\frac{1}{\lambda}\), representing the mean time between events.
+
+Variance (\(Var[X]\))
+
+To find the variance (\(Var[X]\)), we need to take the second derivative of the MGF, subtract the square of the first derivative, and evaluate it at \(t = 0\).
+
+Step 1: Calculate the Second Derivative
+
+Let's calculate the second derivative of the MGF:
+
+\[M''(t) = \frac{d^2}{dt^2} \left[ \frac{1}{{1 - \lambda t}} \right]\]
+
+Step 2: Subtract Square of First Derivative
+
+Subtract the square of the first derivative:
+
+\[Var[X] = M''(0) - \left[ M'(0) \right]^2\]
+
+This results in:
+
+\[Var[X] = \frac{1}{\lambda^2}\]
+
+The variance of the exponential distribution using the moment generating function is \(\frac{1}{\lambda^2}\).
+
+
+
