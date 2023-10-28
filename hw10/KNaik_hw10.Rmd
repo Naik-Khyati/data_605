@@ -1,0 +1,66 @@
+---
+title: "Khyati Naik: Data 605 - HW10"
+date: "Nov 4, 2023"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+---
+
+
+## 1. Question
+
+Smith is in jail and has 1 dollar; he can get out on bail if he has 8 dollars.
+A guard agrees to make a series of bets with him. If Smith bets A dollars,
+he wins A dollars with probability .4 and loses A dollars with probability .6.
+Find the probability that he wins 8 dollars before losing all of his money if
+
+### (a) he bets 1 dollar each time (timid strategy).
+
+```{r}
+# Define win and lose probabilities
+win_probability <- 0.4
+lose_probability <- 0.6
+
+# Calculate their ratio
+probability_ratio <- lose_probability / win_probability
+
+# Set the initial round and total rounds
+current_round <- 1
+total_rounds <- 8
+
+# Initialize a vector to store probabilities
+probabilities <- numeric(total_rounds)
+
+# Calculate and store the probabilities
+for (round in current_round:total_rounds) {
+  prob <- round((1 - probability_ratio^round) / (1 - probability_ratio^total_rounds), 4)
+  probabilities[round] <- prob
+  cat("Round", round, "Probability:", prob, "\n")
+}
+```
+
+### (b) he bets, each time, as much as possible but not more than necessary to bring his fortune up to 8 dollars (bold strategy).
+
+In the bold strategy, Smith bets as much as possible without exceeding the 8-dollar goal. If he wins, he follows this sequence: 1, 2, 4, 8.
+
+Starting with 1 dollar, Smith must achieve three consecutive wins with a probability of 0.4 for each win. To find the probability of three consecutive successes, we calculate:
+
+P(bold) = (0.4)^3 = 0.064
+
+So, with the bold strategy, Smith has a 6.4% chance of reaching 8 dollars before losing all his money.
+
+
+### (c) Which strategy gives Smith the better chance of getting out of jail?
+
+The probability of success depends on the strategy Smith employs:
+
+(a) Timid Strategy: In this strategy, Smith bets 1 dollar each time. We calculated that the probability of winning 8 dollars before losing all of his money is approximately 0.0203 (or 2.03%).
+
+(b) Bold Strategy: In this strategy, Smith bets as much as possible but not more than necessary to reach 8 dollars. We calculated the probability of success to be 0.064 (or 6.4%).
+
+Comparing these two strategies, the bold strategy significantly increases Smith's chances of getting out of jail. The probability of success is much higher with the bold strategy, making it the better choice.
