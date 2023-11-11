@@ -1,0 +1,180 @@
+---
+title: "Khyati Naik: Data 605 - HW12"
+date: "Nov 18, 2023"
+---
+
+## Question
+
+```{r}
+library(tidyverse)
+# Read the CSV file from the URL
+url <- "https://raw.githubusercontent.com/Naik-Khyati/data_605/main/hw12/input/who.csv"
+df_who <- read_csv(url)
+glimpse(df_who)
+```
+
+### 1. Provide a scatterplot of LifeExp~TotExp, and run simple linear regression. Do not transform the variables. Provide and interpret the F statistics, R^2, standard error,and p-values only. Discuss whether the assumptions of simple linear regression met.
+
+```{r}
+# Create a scatterplot of LifeExp vs. TotExp
+ggplot(df_who, aes(x = TotExp, y = LifeExp)) +
+  geom_point() +
+  labs(x = "Total Expenditure", y = "Life Expectancy") +
+  ggtitle("Scatterplot of Life Expectancy vs. Total Expenditure")
+```
+
+
+
+
+```{r}
+# Fit a Linear Model
+model <- lm(LifeExp ~ TotExp, data = df_who)
+
+# Summary of the Linear Model
+summary(model)
+```
+
+
+F-statistic: The F-statistic measures the overall significance of the model. In this case, the F-statistic is 65.26 with 1 and 188 degrees of freedom. The associated p-value is approximately 7.714e-14, which is very close to zero. This indicates that the model is statistically significant, meaning that at least one predictor variable (TotExp) is related to the response variable (LifeExp).
+
+R-squared (Multiple R-squared): The R-squared value is 0.2577, which represents the proportion of the variance in the response variable (LifeExp) explained by the predictor variable (TotExp). In this model, approximately 25.77% of the variance in life expectancy is explained by total expenditures. The Adjusted R-squared (0.2537) adjusts for the number of predictors.
+
+Standard Error: The residual standard error, which is 9.371, represents the typical error of the model's predictions. Smaller values indicate a better fit to the data.
+
+p-value (Pr(>|t|)): The p-value for the TotExp coefficient is approximately 7.71e-14. This p-value tests whether the predictor variable (TotExp) has a significant relationship with the response variable (LifeExp). The very small p-value suggests that there is a significant relationship between total expenditures and life expectancy.
+
+In summary, the model is statistically significant, with total expenditures (TotExp) explaining a significant portion of the variation in life expectancy (25.77%). The low p-value for the TotExp coefficient indicates that this predictor variable is statistically significant. The model's residual standard 
+error (9.371) represents the typical error in life expectancy predictions.
+
+```{r}
+# Check linearity assumption
+plot(model, which = 1)
+
+# Check independence/normality assumption
+plot(model, which = 2)
+
+# Check homoscedasticity assumption
+plot(model, which = 3)
+
+# Check for outliers and influential points
+plot(model, which = 4)
+```
+
+Check Linearity (which = 1):
+
+This plot assesses the linearity assumption of the simple linear regression model. The scatterplot of "LifeExp vs. TotExp" with a regression line is presented. We look for a random scatter of data points around the regression line. A random scatter suggests that the linearity assumption is met. However, in this plot, the data points does not seem to be reasonably scattered around the regression line, indicating that the linearity assumption does not hold.
+
+Check Independence/Normality (which = 2):
+
+This plot checks the assumptions of independence and normality of residuals. The normal quantile-quantile (Q-Q) plot is presented, with the expected quantiles on the x-axis and the residuals' quantiles on the y-axis. We look for the residuals to follow a straight line, which suggests that the normality assumption is met.
+However, in this plot, the residuals do not follow a straight line, indicating that the normality assumption is not satisfied.
+
+Check Homoscedasticity (which = 3):
+
+This plot examines the constant variance (homoscedasticity) assumption. The plot of residuals against fitted values is shown. We look for the residuals to be roughly evenly spread with no discernible pattern. A consistent spread suggests that the homoscedasticity assumption is reasonable. However, in this plot, the residuals do not display a consistent spread, indicating that the constant variance assumption is not met.
+
+Check for Outliers and Influential Points (which = 4):
+
+This plot helps identify potential outliers and influential points. It displays several diagnostic statistics, including leverage, Cook's distance, and standardized residuals. Outliers and influential points are often located in the upper right or lower right of the plot, indicating that they may have a significant impact on the regression model. In this plot, it appears that there are no extreme outliers, suggesting that the model is not unduly affected by single data points.
+
+
+Overall, the diagnostic plots indicate that the assumptions of simple linear regression, including linearity, independence/normality and homoscedasticity are not met by the model.
+
+### 2. Raise life expectancy to the 4.6 power (i.e., LifeExp^4.6). Raise total expenditures to the 0.06 power (nearly a log transform, TotExp^.06). Plot LifeExp^4.6 as a function of TotExp^.06, and r re-run the simple regression model using the transformed variables. Provide and interpret the F statistics, R^2, standard error, and p-values. Which model is "better?"
+
+```{r}
+# Transform the variables
+df_who$LifeExpTransformed <- df_who$LifeExp^4.6
+df_who$TotExpTransformed <- df_who$TotExp^0.06
+
+# Create a scatterplot of the transformed variables
+plot(df_who$TotExpTransformed, df_who$LifeExpTransformed, 
+     xlab = "TotExp^0.06", ylab = "LifeExp^4.6", 
+     main = "Scatterplot of Transformed Variables")
+```
+
+```{r}
+# Fit a linear model with the transformed variables
+model_transformed <- lm(LifeExpTransformed ~ TotExpTransformed, data = df_who)
+
+# Summary of the transformed model
+summary(model_transformed)
+```
+
+F-statistic: The F-statistic is 507.7 with 1 and 188 degrees of freedom. The associated p-value is less than 2.2e-16, which is very close to zero. This indicates that the model is statistically significant, suggesting that at least one predictor variable (TotExpTransformed) is related to the response variable (LifeExpTransformed).
+
+R-squared (Multiple R-squared): The R-squared value is 0.7298, which represents the proportion of the variance in the response variable (LifeExpTransformed) explained by the predictor variable (TotExpTransformed). In this model, approximately 72.98% of the variance in life expectancy (transformed) is explained by transformed total expenditures. The Adjusted R-squared (0.7283) adjusts for the number of predictors.
+
+Standard Error: The residual standard error is 90,490,000, which represents the typical error of the model's predictions. Smaller values indicate a better fit to the data.
+
+p-value (Pr(>|t|)): The p-value for the TotExpTransformed coefficient is less than 2.2e-16. This p-value tests whether the predictor variable (TotExpTransformed) has a significant relationship with the response variable (LifeExpTransformed). The very small p-value suggests that there is a significant relationship between transformed total expenditures and transformed life expectancy.
+
+The second model with transformed variables (LifeExpTransformed and TotExpTransformed) has a substantially higher R-squared value (0.7298), indicating that it explains more of the variance in life expectancy. It also has a lower residual standard error, suggesting better predictive performance. Therefore, based on the R-squared and the standard error, the model with transformed variables appears to be a better fit for the data. 
+
+
+### 3. Using the results from 3, forecast life expectancy when TotExp^.06 =1.5. Then forecast life expectancy when TotExp^.06=2.5. 
+
+```{r}
+# Given coefficients
+beta0 <- -736527910
+beta1 <- 620060216
+
+# Calculate TotExpTransformed for the given values
+totExpTransformed_1.5 <- (1.5)
+totExpTransformed_2.5 <- (2.5)
+
+# Forecast LifeExpTransformed
+lifeExpTransformed_1.5 <- beta0 + beta1 * totExpTransformed_1.5
+lifeExpTransformed_2.5 <- beta0 + beta1 * totExpTransformed_2.5
+
+cat("Forecasted Life Expectancy when TotExp^0.06 = 1.5:", lifeExpTransformed_1.5, "\n")
+cat("Forecasted Life Expectancy when TotExp^0.06 = 2.5:", lifeExpTransformed_2.5, "\n")
+```
+
+### 4. Build the following multiple regression model and interpret the F Statistics, R^2, standard error, and p-values. How good is the model?
+LifeExp = b0+b1 x PropMd + b2 x TotExp +b3 x PropMD x TotExp
+
+```{r}
+# Build the multiple regression model
+model_multiple <- lm(LifeExp ~ PropMD + TotExp + PropMD * TotExp, data = df_who)
+
+# Summary of the multiple regression model
+summary(model_multiple)
+```
+F Statistics (F-statistic): The F-statistic tests whether the overall model (which includes PropMD, TotExp, and the interaction term PropMD * TotExp) is statistically significant. In this case, the F-statistic is 34.49, and the p-value is essentially zero (p-value: < 2.2e-16), indicating that the model as a whole is statistically significant. This suggests that at least one of the predictor variables is associated with LifeExp.
+
+R-squared (R^2): The R-squared value is 0.3574. This means that approximately 35.74% of the variance in LifeExp is explained by the combination of PropMD, TotExp, and the interaction term. While this indicates a moderate level of explanation, there is still a substantial amount of unexplained variance.
+
+Standard Error: The residual standard error is 8.765. This represents the average deviation of the observed LifeExp values from the predicted values. It is a measure of the model's accuracy. Lower values indicate a better fit.
+
+P-values for Coefficients:
+
+The intercept (b0) has an extremely low p-value (< 2e-16), suggesting its statistical significance.
+The coefficient for PropMD (b1) has a p-value of 2.32e-07, indicating its strong statistical significance.
+The coefficient for TotExp (b2) also has a very low p-value (9.39e-14), showing its statistical significance.
+The interaction term PropMD:TotExp (b3) has a p-value of 6.35e-05, indicating its statistical significance.
+
+Overall, the model appears to be statistically significant, as suggested by the low p-value for the F-statistic. Additionally, the R-squared value indicates that the model can explain a significant portion of the variance in LifeExp. 
+
+The coefficients for PropMD, TotExp, and the interaction term are all statistically significant. These coefficients represent the effect of these variables on LifeExp. The interaction term suggests that the relationship between PropMD and TotExp is not simply additive but rather has an interactive effect on LifeExp.
+
+
+### 5. Forecast LifeExp when PropMD=.03 and TotExp = 14. Does this forecast seem realistic? Why or why not?
+
+```{r}
+# Provided coefficients from the multiple regression model
+b0 <- 62.77
+b1 <- 1497
+b2 <- 0.00007233
+b3 <- -0.006026
+
+# Values for forecasting
+PropMD <- 0.03
+TotExp <- 14
+
+# Forecast LifeExp
+LifeExp_forecast <- b0 + b1 * PropMD + b2 * TotExp + b3 * (PropMD * TotExp)
+
+# Print the forecasted LifeExp
+cat("Forecasted LifeExp:", LifeExp_forecast, "years\n")
+```
