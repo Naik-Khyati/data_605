@@ -1,0 +1,45 @@
+---
+title: "Khyati Naik: Data 605 - HW14"
+date: "Dec 3, 2023"
+---
+
+## 1. \( f(x) = \frac{1}{{1 - x}} \)
+
+The Taylor Series expansion for \( f(x) = \frac{1}{{1 - x}} \) is given by the geometric series:
+
+\[ f(x) = \sum_{n=0}^{\infty} x^n \]
+
+This is a geometric series with a common ratio \( x \), converging when \( |x| < 1 \). The sum is:
+
+\[ f(x) = 1 + x + x^2 + x^3 + \ldots \]
+
+## 2. \( f(x) = e^x \)
+
+The Taylor Series expansion for \( f(x) = e^x \) is the exponential series:
+
+\[ f(x) = 1 + x + \frac{{x^2}}{{2!}} + \frac{{x^3}}{{3!}} + \frac{{x^4}}{{4!}} + \ldots \]
+
+The general equation for this series is:
+
+\[ \sum_{k=0}^{\infty} \frac{x^k}{k!} \]
+
+## 3. \( f(x) = \ln(1 + x) \)
+
+The Taylor Series expansion for \( f(x) = \ln(1 + x) \) is obtained using the series expansion for the natural logarithm:
+
+\[ f(x) = x - \frac{{x^2}}{{2}} + \frac{{x^3}}{{3}} - \frac{{x^4}}{{4}} + \ldots \]
+
+The general equation for this series is:
+
+\[ \sum_{k=1}^{\infty} \frac{(-1)^{k+1}x^k}{k} \]
+
+
+## 4. \( f(x) = x^{1/2} \)
+
+The Taylor Series expansion for \( f(x) = x^{1/2} \) (square root function) is found using the binomial series expansion:
+
+\[ f(x) = (1 + x)^{1/2} = 1 + \frac{1}{2}x - \frac{1}{8}x^2 + \frac{1}{16}x^3 - \ldots \]
+
+The general equation for this series is:
+
+\[ f(x) = \sum_{k=0}^{\infty} \frac{(-1)^k (2k-1)!!}{2^k k!} x^k \]
