@@ -1,0 +1,145 @@
+---
+title: "Khyati Naik: Data 605 - HW15"
+date: "Dec 9, 2023"
+output:
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+---
+
+### 1. Find the equation of the regression line for the given points. Round any final values to the nearest hundredth, if necessary.
+**( 5.6, 8.8 ), ( 6.3, 12.4 ), ( 7, 14.8 ), ( 7.7, 18.2 ), ( 8.4, 20.8)**
+
+To find the equation of the regression line, we can use the least squares method. The equation of a straight line is given by y=mx+b,where m is the slope and b is the y-intercept.
+
+Let's calculate the slope (m) and y-intercept (b) using the given points:
+
+```{r}
+# Given data points
+x <- c(5.6, 6.3, 7, 7.7, 8.4)
+y <- c(8.8, 12.4, 14.8, 18.2, 20.8)
+
+# Calculate the slope (m) and y-intercept (b)
+fit <- lm(y ~ x)
+m <- coef(fit)[2]
+b <- coef(fit)[1]
+
+# Print the equation of the regression line
+cat("The equation of the regression line is: y =", round(m, 2), "x +", round(b, 2), "\n")
+```
+
+
+### 2. Find all local maxima, local minima, and saddle points for the function given below. Write your answer(s) in the form ( x, y, z ). Separate multiple points with a comma.
+**f ( x, y ) = 24x - 6xy^2 - 8y^3**
+
+**Solution:**
+
+**1. Critical Points**
+
+Find \( \frac{\partial f}{\partial x} \) and \( \frac{\partial f}{\partial y} \):
+\[ \frac{\partial f}{\partial x} = 24 - 6y^2 \]
+\[ \frac{\partial f}{\partial y} = -y(12x + 24y) \]
+
+Set \( \frac{\partial f}{\partial x} = 0 \) to find \( y = \pm 2 \).
+- For \( y = 2 \), substitute into \( \frac{\partial f}{\partial y} = 0 \) to find \( x = -4 \).
+- For \( y = -2 \), substitute into \( \frac{\partial f}{\partial y} = 0 \) to find \( x = 4 \).
+
+Therefore, the critical points are \( (-4, 2) \) and \( (4, -2) \).
+
+**2. Second Derivative Test**
+
+Find \( \frac{\partial^2 f}{\partial x^2} \), \( \frac{\partial^2 f}{\partial y^2} \), and \( \frac{\partial^2 f}{\partial x \partial y} \):
+\[ \frac{\partial^2 f}{\partial x^2} = 0 \]
+\[ \frac{\partial^2 f}{\partial y^2} = -(12x + 48y) \]
+\[ \frac{\partial^2 f}{\partial x \partial y} = -12y \]
+
+Evaluate \( \Delta = \frac{\partial^2 f}{\partial x^2} \frac{\partial^2 f}{\partial y^2} - \left(\frac{\partial^2 f}{\partial x \partial y}\right)^2 \) at \( (-4, 2) \) and \( (4, -2) \):
+\[ \Delta(-4, 2) = 0 \]
+\[ \Delta(4, -2) = 0 \]
+
+Since \( \Delta = 0 \), the test is inconclusive.
+
+**3. Conclusion**
+
+- The critical points are \( (-4, 2) \) and \( (4, -2) \).
+- The Second Derivative Test is inconclusive.
+- Additional analysis is needed to determine the nature of these points.
+
+
+### 3. A grocery store sells two brands of a product, the "house" brand and a "name" brand. The manager estimates that if she sells the "house" brand for x dollars and the "name" brand for y dollars, she will be able to sell 81 - 21x + 17y units of the "house" brand and 40 + 11x - 23y units of the "name" brand.
+
+**Step 1. Find the revenue function R ( x, y ).**
+
+The revenue function R(x,y) is given by the product of the quantity sold and the price for each brand. So, for the "house" brand, the revenue is x(81−21x+17y), and for the "name" brand, the revenue is y(40+11x−23y). Therefore, the total revenue function is:
+
+R(x,y)=x(81−21x+17y)+y(40+11x−23y)
+
+**Step 2. What is the revenue if she sells the "house" brand for $2.30 and the "name" brand for $4.10?**
+
+```{r}
+# Step 1: Define the revenue function
+revenue_function <- function(x, y) {
+  return(x * (81 - 21 * x + 17 * y) + y * (40 + 11 * x - 23 * y))
+}
+
+# Step 2: Find the revenue when x = 2.30 and y = 4.10
+revenue_at_given_prices <- revenue_function(2.30, 4.10)
+
+# Display the result
+print(paste("The revenue when selling the 'house' brand for $2.30 and the 'name' brand for $4.10 is $", round(revenue_at_given_prices, 2)))
+```
+
+
+### 4. A company has a plant in Los Angeles and a plant in Denver. The firm is committed to produce a total of 96 units of a product each week. The total weekly cost is given by 
+### C(x, y) = (x^2/6) + (y^2/6) +7x+25y+700
+### , where x is the number of units produced in Los Angeles and y is the number of units produced in Denver. How many units should be produced in each plant to minimize the total weekly cost?
+
+**Solution:**
+
+**Cost Function:**
+The cost function is given by:
+\[C(x, y) = \frac{1}{6}x^2 + \frac{1}{6}y^2 + 7x + 25y + 700\]
+
+**Constraint:**
+The constraint is \(x + y = 96\), which can be rewritten as \(x = 96 - y\).
+
+**Objective:**
+Minimize the cost function \(C(x, y)\).
+
+**Optimization Steps:**
+1. Substitute the expression \(x = 96 - y\) into the cost function.
+2. Take the first derivative of the modified cost function with respect to \(y\).
+3. Set the first derivative equal to zero and solve for \(y\).
+4. Substitute the optimal \(y\) back into the constraint to find \(x\).
+
+**Result:**
+The optimal solution is \(x = 75\) (units produced in Los Angeles) and \(y = 21\) (units produced in Denver).
+
+
+### 5. Evaluate the double integral on the given region.Write your answer in exact form without decimals.
+
+**Solution:**
+
+To evaluate the double integral
+
+\[ \int_{2}^{4} \int_{2}^{4} e^{8x+3y} \,dy \,dx \]
+
+we'll integrate with respect to \(y\) first, and then with respect to \(x\).
+
+**1. Integrate with respect to \(y\)**
+
+\[ \int e^{8x+3y} \,dy \]
+
+The result is \( \frac{1}{3} e^{8x+3y} \). Evaluate this from \(y=2\) to \(y=4\).
+
+**2. Integrate with respect to \(x\)**
+
+\[ \int_{2}^{4} \frac{1}{3} e^{8x+3y} \,dx \]
+
+The result is \( \frac{1}{3} \cdot \frac{1}{8} e^{8x+3y} \). Evaluate this from \(x=2\) to \(x=4\).
+
+Substitute the upper and lower limits:
+
+\[ \frac{1}{3} \cdot \frac{1}{8} \left( e^{8(4)+3y} - e^{8(2)+3y} \right) \]
+
