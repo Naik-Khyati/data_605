@@ -1,0 +1,413 @@
+---
+title: "Khyati Naik: Data 605 - Final exam"
+date: "Dec 16, 2023"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+## Problem 1
+
+Using R, set a random seed equal to 1234 (i.e., set.seed(1234)).  Generate a random variable X that has 10,000 continuous random uniform values between 5 and 15.Then generate a random variable Y that has 10,000 random normal values with a mean of 10 and a standard deviation of 2.89.
+
+```{r}
+# Set the random seed
+set.seed(1234)
+
+# Generate a random variable X with 10,000 continuous random uniform values between 5 and 15
+X <- runif(10000, min = 5, max = 15)
+
+# Generate a random variable Y with 10,000 random normal values
+# Mean = 10, Standard Deviation = 2.89
+Y <- rnorm(10000, mean = 10, sd = 2.89)
+
+# Check the first few values of X and Y
+head(X)
+head(Y)
+```
+
+
+Probability
+
+Calculate as a minimum the below probabilities a through c.  Assume the small letter "x" is estimated as the median of the X variable, and the small letter "y" is estimated as the median of the Y variable.  Interpret the meaning of all probabilities.
+
+### 5 points.   a.   P(X>x | X>y)		b.  P(X>x & Y>y)		c.  P(X<x | X>y)	
+
+```{r}
+# Calculate the median of X and Y
+x_median <- median(X)
+y_median <- median(Y)
+
+# a. P(X > x | X > y)
+prob_a <- sum(X > x_median & X > y_median) / sum(X > y_median)
+
+# b. P(X > x & Y > y)
+prob_b <- sum(X > x_median & Y > y_median) / length(X)
+
+# c. P(X < x | X > y)
+prob_c <- sum(X < x_median & X > y_median) / sum(X > y_median)
+
+# Display the calculated probabilities
+cat("a. P(X > x | X > y):", prob_a, "\n")
+cat("b. P(X > x & Y > y):", prob_b, "\n")
+cat("c. P(X < x | X > y):", prob_c, "\n")
+```
+
+
+### 5 points.  Investigate whether P(X>x & Y>y)=P(X>x)P(Y>y) by building a table and evaluating the marginal and joint probabilities.
+
+```{r}
+# Calculate marginal probabilities
+p_x_gt_x <- sum(X > x_median) / length(X)
+p_y_gt_y <- sum(Y > y_median) / length(Y)
+
+# Calculate joint probability P(X > x & Y > y)
+p_joint <- sum(X > x_median & Y > y_median) / length(X)
+
+# Calculate the product of marginal probabilities
+p_product <- p_x_gt_x * p_y_gt_y
+
+# Build a table
+table_data <- matrix(c(
+  sum(X > x_median & Y > y_median), sum(X > x_median & Y <= y_median),
+  sum(X <= x_median & Y > y_median), sum(X <= x_median & Y <= y_median)
+), nrow = 2, byrow = TRUE)
+
+colnames(table_data) <- c("Y > y", "Y <= y")
+rownames(table_data) <- c("X > x", "X <= x")
+
+# Display the table
+cat("Table of Joint and Marginal Probabilities:\n")
+print(table_data)
+
+# Display the calculated probabilities
+cat("\nP(X > x & Y > y):", p_joint, "\n")
+cat("P(X > x) * P(Y > y):", p_product, "\n")
+```
+
+
+### 5 points.  Check to see if independence holds by using Fisher’s Exact Test and the Chi Square Test.  What is the difference between the two? Which is most appropriate? Are you surprised at the results?  Why or why not?
+
+
+```{r}
+# Create a contingency table
+contingency_table <- table(X > x_median, Y > y_median)
+
+# Fisher's Exact Test
+fisher_result <- fisher.test(contingency_table)
+
+# Chi-Square Test
+chi_square_result <- chisq.test(contingency_table)
+
+# Display the results
+print("Fisher's Exact Test:")
+print(fisher_result)
+
+print("\nChi-Square Test:")
+print(chi_square_result)
+```
+
+The results of Fisher's Exact Test and the Chi-Square Test indicate that the p-values are approximately 0.7949 for both tests. 
+
+**Fisher's Exact Test:** This test provides an exact probability for the observed distribution and is particularly useful for small sample sizes or 2x2 contingency tables.
+
+**Chi-Square Test:** This test compares the observed distribution with the distribution expected under independence. It's applicable to larger samples and is a commonly used test for contingency tables.
+
+Both tests yield similar p-values in this case, likely because the sample size is not very small, and the assumptions of the Chi-Square Test are not strongly violated. For larger samples or situations where the sample size is not extremely small, the Chi-Square Test is often more practical due to its efficiency.
+
+The high p-values (approximately 0.7949) suggest that there is not enough evidence to reject the null hypothesis of independence. Both tests indicate a lack of significant association between the variables.
+
+The lack of evidence against the null hypothesis aligns with the expectation of independence between the variables. The results are not surprising because the calculated p-values are relatively high, indicating that the observed association is not statistically significant.
+
+
+
+
+
+## Problem 2
+You are to register for Kaggle.com (free) and compete in the Regression with a Crab Age Dataset competition.  https://www.kaggle.com/competitions/playground-series-s3e16  I want you to do the following.
+
+```{r}
+# Install and load necessary libraries
+library(tidyverse)
+library(psych)
+library(corrplot)
+```
+
+
+```{r}
+# Load the dataset
+github_url <- "https://raw.githubusercontent.com/Naik-Khyati/data_605/main/final_exam/"
+
+train_csv <- "train.csv"
+test_csv <- "test.csv"
+
+train_url <- paste0(github_url,train_csv,'')
+test_url <- paste0(github_url,test_csv,'')
+
+# Read train.csv and test.csv
+train_data <- read.csv(train_url)
+test_data <- read.csv(test_url)
+
+# Display the structure of the datasets
+glimpse(train_data)
+glimpse(test_data)
+
+```
+
+
+### 5 points.  Descriptive and Inferential Statistics. 
+
+Provide univariate descriptive statistics and appropriate plots for the training data set.  Provide a scatterplot matrix for at least two of the independent variables and the dependent variable. Derive a correlation matrix for any three quantitative variables in the dataset.  Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide an 80% confidence interval.  Discuss the meaning of your analysis.  Would you be worried about familywise error? Why or why not?
+
+```{r}
+# Univariate descriptive statistics
+summary(train_data)
+
+# Boxplot for Age
+ggplot(train_data, aes(x = Sex, y = Age, fill = Sex)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Age by Gender", x = "Gender", y = "Age")
+
+# Histogram for Length
+ggplot(train_data, aes(x = Length)) +
+  geom_histogram(binwidth = 0.1, fill = "blue", color = "black") +
+  labs(title = "Histogram of Length", x = "Length", y = "Frequency")
+
+```
+
+```{r}
+# Scatterplot matrix for selected variables
+# Scatterplot Matrix for Two Independent Variables and the Dependent Variable
+pairs(train_data[, c("Length", "Diameter", "Age")], main = "Scatterplot Matrix")
+
+
+```
+
+```{r}
+# Selecting three quantitative variables
+selected_vars <- c("Length", "Diameter", "Age")
+cor_vars <- train_data[, selected_vars]
+
+# Correlation matrix
+cor_matrix <- cor(cor_vars)
+
+# Display the correlation matrix
+print("Correlation Matrix:")
+print(cor_matrix)
+
+# Function to calculate the confidence interval for a correlation
+cor_conf_interval <- function(x, y, conf_level) {
+  cor_test_result <- cor.test(x, y, method = "pearson")
+  conf_int <- cor_test_result$conf.int
+  conf_level_text <- paste0(conf_level * 100, "%")
+  cat("Correlation (", conf_level_text, " CI): ", round(cor_test_result$estimate, 3), "\n")
+  cat("Confidence Interval: [", round(conf_int[1], 3), ", ", round(conf_int[2], 3), "]\n\n")
+}
+
+# Calculate and display the results for each pairwise correlation
+cor_conf_interval(cor_vars$Length, cor_vars$Diameter, 0.80)
+cor_conf_interval(cor_vars$Length, cor_vars$Age, 0.80)
+cor_conf_interval(cor_vars$Diameter, cor_vars$Age, 0.80)
+
+```
+
+
+The correlation analysis reveals strong positive relationships between Length and Diameter, and positive but less strong relationships between Length and Age, as well as Diameter and Age.  
+
+The narrow confidence intervals indicate precise estimates, and the hypothesis tests confirm significant positive correlations. 
+
+Familywise error occurs when multiple hypothesis tests are conducted simultaneously, increasing the chance of at least one Type I error.
+In this analysis, we have performed several tests, including descriptive statistics, scatterplot matrix, and correlation tests. To mitigate familywise error, methods like Bonferroni correction can be applied to adjust the significance level for multiple comparisons.
+
+
+### 5 points. Linear Algebra and Correlation.  
+Invert your correlation matrix from above. (This is known as the precision matrix and contains variance inflation factors on the diagonal.) Multiply the correlation matrix by the precision matrix, and then multiply the precision matrix by the correlation matrix. Conduct LDU decomposition on the matrix.  
+
+
+```{r}
+# Invert the correlation matrix
+precision_matrix <- solve(cor_matrix)
+
+# Multiply the correlation matrix by the precision matrix
+result1 <- cor_matrix %*% precision_matrix
+
+# Multiply the precision matrix by the correlation matrix
+result2 <- precision_matrix %*% cor_matrix
+
+# Eigen decomposition
+eigen_decomposition <- eigen(cor_matrix)
+
+# Extracting eigenvalues and eigenvectors
+eigenvalues <- eigen_decomposition$values
+eigenvectors <- eigen_decomposition$vectors
+
+# Display the results
+print("Correlation Matrix:")
+print(cor_matrix)
+
+print("\nInverted Precision Matrix:")
+print(precision_matrix)
+
+print("\nResult of Correlation Matrix multiplied by Precision Matrix:")
+print(result1)
+
+print("\nResult of Precision Matrix multiplied by Correlation Matrix:")
+print(result2)
+
+print("\nEigenvalues:")
+print(eigenvalues)
+
+print("\nEigenvectors:")
+print(eigenvectors)
+```
+
+
+
+### 5 points.  Calculus-Based Probability & Statistics.  
+Many times, it makes sense to fit a closed form distribution to data.  Select a variable in the Kaggle.com training dataset that is skewed to the right, shift it so that the minimum value is absolutely above zero if necessary.  Then load the MASS package and run fitdistr to fit an exponential probability density function.  (See  https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html ).  Find the optimal value of lambda for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, lambda)).  Plot a histogram and compare it with a histogram of your original variable.   Using the exponential pdf, find the 5th and 95th percentiles using the cumulative distribution function (CDF).   Also generate a 95% confidence interval from the empirical data, assuming normality.  Finally, provide the empirical 5th percentile and 95th percentile of the data.  Discuss.
+
+
+```{r}
+# Get the numeric columns from the dataset
+numeric_cols <- sapply(train_data, is.numeric)
+
+# Create histograms for all numeric variables
+par(mfrow = c(2, ceiling(sum(numeric_cols) / 2)))  
+
+for (col in names(train_data)[numeric_cols]) {
+  hist(train_data[[col]], main = paste("Histogram of", col), col = "lightblue", border = "black", xlab = col)
+}
+
+par(mfrow = c(1, 1))
+
+```
+
+
+```{r}
+# Extract the 'Weight' variable
+weight_var <- train_data$Weight
+
+# Shift the variable to ensure it's above zero
+shifted_weight <- weight_var - min(weight_var) + 1
+
+# Load the MASS package
+library(MASS)
+
+# Fit an exponential distribution using fitdistr
+fit_exp <- fitdistr(shifted_weight, densfun = "exponential")
+
+# Extract the optimal value of lambda
+lambda_optimal <- fit_exp$estimate
+
+# Generate 1000 samples from the exponential distribution
+samples_exp <- rexp(1000, rate = lambda_optimal)
+
+# Plot histograms of the original and exponential distributions
+par(mfrow = c(1, 2))
+hist(shifted_weight, main = "Original Weight", xlab = "Value", col = "lightblue", border = "black")
+hist(samples_exp, main = "Exponential Distribution", xlab = "Value", col = "lightgreen", border = "black")
+
+# Find the 5th and 95th percentiles using the exponential distribution
+percentile_5_exp <- qexp(0.05, rate = lambda_optimal)
+percentile_95_exp <- qexp(0.95, rate = lambda_optimal)
+
+# Find the 5th and 95th percentiles from the empirical data
+percentile_5_empirical <- quantile(shifted_weight, 0.05)
+percentile_95_empirical <- quantile(shifted_weight, 0.95)
+
+# Generate a 95% confidence interval from the empirical data (assuming normality)
+conf_interval_empirical <- t.test(shifted_weight)$conf.int
+
+# Display the results
+print("Optimal Lambda for Exponential Distribution:")
+print(lambda_optimal)
+
+print("\n5th and 95th Percentiles from Exponential Distribution:")
+print(c(percentile_5_exp, percentile_95_exp))
+
+print("\n5th and 95th Percentiles from Empirical Data:")
+print(c(percentile_5_empirical, percentile_95_empirical))
+
+print("\n95% Confidence Interval from Empirical Data:")
+print(conf_interval_empirical)
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+
+```
+
+
+
+### 10 points.  Modeling. 
+Build some type of multiple regression  model and submit your model to the competition board.  Provide your complete model summary and results with analysis.  Report your Kaggle.com user name and score.
+
+
+```{r}
+# Fit a multiple regression model on the training data
+model <- lm(Age ~ Length + Diameter + Height + Weight + Shucked.Weight + Viscera.Weight + Shell.Weight, data = train_data)
+
+# Display the complete model summary
+summary(model)
+
+```
+
+
+```{r}
+
+# Feature Engineering
+train_data$Weight_Squared <- train_data$Weight^2
+test_data$Weight_Squared <- test_data$Weight^2
+
+# Model with Polynomial Features
+model <- lm(Age ~ Length + Diameter + Height + Weight + Shucked.Weight + Viscera.Weight + Shell.Weight + Weight_Squared, data = train_data)
+
+# Display the updated model summary
+summary(model)
+```
+**Coefficients**
+
+*Intercept:* The intercept is 4.11. This is the estimated average 'Age' when all other predictors are zero. 
+
+*Positive Coefficients:* 'Height,' 'Weight,' 'Shell.Weight,' and 'Diameter' have positive coefficients. An increase in these variables is associated with an increase in the predicted 'Age.'
+
+*Negative Coefficients:* 'Length,' 'Shucked.Weight,' 'Viscera.Weight,' and 'Weight_Squared' have negative coefficients. An increase in these variables is associated with a decrease in the predicted 'Age.'
+Significance of Coefficients:
+
+All coefficients are highly significant (p-values < 0.001), indicating that each predictor contributes significantly to explaining the variation in 'Age.'
+
+**Model Fit**
+
+*R-squared:* The R^2 value is 0.546, indicating that the model explains approximately 54.6% of the variability in 'Age.'
+
+*Adjusted R-squared:* The adjusted R^2  accounts for the number of predictors and is 0.546. It penalizes the model for including irrelevant predictors.
+
+*F-statistic:* The F-statistic is 1.113e+04 with a highly significant p-value, suggesting that the model as a whole is statistically significant.
+
+*Residuals:* The residuals have a median close to zero, indicating that, on average, the model does a good job predicting the 'Age.' However, there's variability, as seen from the range of residuals.
+Predictor Relationships:
+
+The inclusion of interaction terms ('Weight_Squared') and non-linear terms enhances the model's ability to capture more complex relationships between predictors and 'Age.'
+
+**Model Performance**
+
+The model's performance is reasonable, but there might be room for improvement. 
+
+```{r}
+# Assess model performance on the test data
+test_data$Predicted_Age <- predict(model, newdata = test_data)
+
+# Create a data frame with 'id' and 'predicted_age'
+sample_submission <- data.frame(id = test_data$id, Age = test_data$Predicted_Age)
+
+# Write the data frame to a CSV file
+write.csv(sample_submission, "sample_submission.csv", row.names = FALSE)
+
+glimpse(sample_submission)
+glimpse(test_data)
+```
+
+**Kaggle user name : Khyati Naik9**  
+**Kaggle public score: 1.50092**  
+**Kaggle private score: 1.49516**
+
